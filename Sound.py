@@ -37,10 +37,21 @@ class Sound() :
         return cls(wav_io)
 
     def get_array(self):
+        """
+        Returns the numpy array of the sampled sound.
+        Use np.copy if you are not planning to update the current Sound object.
+            `array = np.copy(obj.get_array())`
+        """
+
         return self._array
 
     def play(self):
+        """
+        Plays the sound object _sound.
+        Please verify that the sound has been updated if the array was modified.
+        """
         play(self._sound)
+        # TODO : implement enveloppe ?
 
     def update_sound_from_array(self):
         """
@@ -51,7 +62,8 @@ class Sound() :
 
     def reinitialize_array(self):
         """
-            Reinitialize _array from _sound.
+            Reinitialize the attribute _array from _sound.
+            This can be useful if you got the array with get_array but did not use np.copy.
         """
 
         self._array = np.array(self._sound.get_array_of_samples())
