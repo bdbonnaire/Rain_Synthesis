@@ -14,17 +14,19 @@ class Sound() :
     def __init__(self, file):
         # loading the file into a pydub object
         try:
-            self._sound = AudioSegment.from_file(file, format='wav')
+            self._sound = AudioSegment.from_file(file, format='wav', channels=1)
         except FileNotFoundError:
             print("Wrong filename, please check that the file exists.")
             raise FileNotFoundError
             # TODO : add other possible exceptions
 
+        self.duration_seconds = self._sound.duration_seconds
+        self.frame_rate = self._sound.frame_rate
         # gets the np array of samples from the pydub object
         self._array = np.array(self._sound.get_array_of_samples())
 
     @classmethod
-    def from_array(cls, array):
+    def from_array(cls, array, frame_rate=44100):
         """
             constructor to create a sound object from a numpy array.
         """
@@ -32,7 +34,7 @@ class Sound() :
         import scipy.io.wavfile
 
         wav_io = io.BytesIO()
-        scipy.io.wavfile.write(wav_io, 16000, array)
+        scipy.io.wavfile.write(wav_io, frame_rate, array.astype(np.int16))
         wav_io.seek(0)
         return cls(wav_io)
 
@@ -65,5 +67,4 @@ class Sound() :
             Reinitialize the attribute _array from _sound.
             This can be useful if you got the array with get_array but did not use np.copy.
         """
-
         self._array = np.array(self._sound.get_array_of_samples())
