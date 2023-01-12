@@ -52,7 +52,11 @@ class Sound() :
         Plays the sound object _sound.
         Please verify that the sound has been updated if the array was modified.
         """
-        play(self._sound)
+        if is_notebook():
+            from IPython.display import Audio, display
+            display(self._sound)
+        else:
+            play(self._sound)
         # TODO : implement enveloppe ?
 
     def update_sound_from_array(self):
@@ -68,3 +72,19 @@ class Sound() :
             This can be useful if you got the array with get_array but did not use np.copy.
         """
         self._array = np.array(self._sound.get_array_of_samples())
+
+def is_notebook() -> bool:
+    """
+    Tells whether the code is executed in a notebook or not.
+    Useful here to be able to use the display function on a notebook.
+    Thanks to Gustavo Bezerra on StackOverflow for this.
+    """
+    try:
+        shell = get_ipython().__class__.__name__
+        if shell == 'ZMQInteractiveShell': # Notebook or other qtGUI
+            return True
+        else:
+            return False
+    except NameError: # IPython is not running
+        return False
+
